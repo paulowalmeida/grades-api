@@ -1,10 +1,15 @@
 import { db } from '../models/index.js';
 import { logger } from '../config/logger.js';
 
-const create = async (req, res) => {
+const Grades = db.gradesModel;
+
+const create = async ({body:{name, subject, type, value, lastModified}}, res) => {
+  const grades = new Grades({name, subject, type, value, lastModified});
+    
   try {
+      const data = await grades.save();
     res.send({ message: 'Grade inserido com sucesso' });
-    logger.info(`POST /grade - ${JSON.stringify()}`);
+    logger.info(`POST /grade - ${JSON.stringify(data)}`);
   } catch (error) {
     res
       .status(500)
@@ -22,7 +27,14 @@ const findAll = async (req, res) => {
     : {};
 
   try {
+    const data = await grades.find({condition});
     logger.info(`GET /grade`);
+    if(!data){
+      res.status(400).send('Grade não encontrada');
+    } else{
+      res.send(data);
+    }
+
   } catch (error) {
     res
       .status(500)
@@ -35,6 +47,13 @@ const findOne = async (req, res) => {
   const id = req.params.id;
 
   try {
+    const data = await gradesModel.findOne({_id:id});
+
+    if(!data){
+      res.status(400).send('Grade não encontrada');
+    } else{
+      res.send(data);
+    }
     logger.info(`GET /grade - ${id}`);
   } catch (error) {
     res.status(500).send({ message: 'Erro ao buscar o Grade id: ' + id });
@@ -52,6 +71,16 @@ const update = async (req, res) => {
   const id = req.params.id;
 
   try {
+    const data = await gradesModel.findByIdAndUpdate({_id:id}, req.body, {
+      new: true,
+    });
+
+    if(!data){
+      res.status(400).send('Grade não encontrada');
+    } else{
+      res.send(data);
+    }
+
     logger.info(`PUT /grade - ${id} - ${JSON.stringify(req.body)}`);
   } catch (error) {
     res.status(500).send({ message: 'Erro ao atualizar a Grade id: ' + id });
@@ -63,6 +92,15 @@ const remove = async (req, res) => {
   const id = req.params.id;
 
   try {
+
+    const data = await gradesModel.findByIdAndRemove({_id:id});
+
+    if(!data){
+      res.status(400).send('Grade não encontrada');
+    } else{
+      res.send(data);
+    }
+
     logger.info(`DELETE /grade - ${id}`);
   } catch (error) {
     res
@@ -74,6 +112,14 @@ const remove = async (req, res) => {
 
 const removeAll = async (req, res) => {
   try {
+    const data = await gradesModel.deleteMany();
+
+    if(!data){
+      res.status(400).send('Grade não encontrada');
+    } else{
+      res.send(data);
+    }
+
     logger.info(`DELETE /grade`);
   } catch (error) {
     res.status(500).send({ message: 'Erro ao excluir todos as Grades' });

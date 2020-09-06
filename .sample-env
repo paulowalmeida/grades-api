@@ -1,2 +1,2 @@
-MONGODB=
-PORT=
+MONGODB=mongodb+srv://pwneo:puruca2009@cluster0.ucmno.mongodb.net/grades?retryWrites=true&w=majority;
+PORT=8081
